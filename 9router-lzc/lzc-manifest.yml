@@ -1,0 +1,31 @@
+lzc-sdk-version: '0.1'
+name: 9router
+package: cloud.lazycat.app.ninerouter
+version: 1.0.0
+description: Local-first AI router with 40+ providers, OAuth subscriptions and fallback combos.
+homepage: https://github.com/decolua/9router
+author: Federico Liva
+locales:
+  en:
+    name: 9router
+    description: Local-first AI router with 40+ providers, OAuth subscriptions and fallback combos.
+  it:
+    name: 9router
+    description: Router AI local-first con 40+ provider, sottoscrizioni OAuth e combo di fallback.
+  zh:
+    name: 9router
+    description: 本地优先的 AI 路由器，支持 40+ 提供商、OAuth 订阅与自动回退。
+
+application:
+  routes:
+    - /=http://ninerouter.cloud.lazycat.app.ninerouter.lzcapp:20128
+  subdomain: ninerouter
+
+services:
+  ninerouter:
+    image: embed:ninerouter@sha256:c972e73484a64be9eb90afd9b5b8f1dc003352653afba3f5ee719e911043ae6e
+    binds:
+      - /lzcapp/var/data:/app/data
+    environment:
+      - DATA_DIR=/app/data
+      - PORT=20128

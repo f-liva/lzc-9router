@@ -1,0 +1,7 @@
+pkgout: ./
+icon: icon.png
+
+images:
+  ninerouter:
+    dockerfile: ../docker/Dockerfile
+    upstream-match: docker.io
