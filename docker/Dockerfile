@@ -1,6 +1,7 @@
 FROM docker.io/decolua/9router:latest
 USER root
 COPY entrypoint.sh /entrypoint.sh
+COPY patch-next-chunks.js /patch-next-chunks.js
 RUN chmod +x /entrypoint.sh
 # HEALTHCHECK: dashboard risponde (anche redirect SSO) purche' il server sia su
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \

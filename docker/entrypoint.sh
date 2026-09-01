@@ -12,6 +12,10 @@ for f in /app/.next/server/chunks/*.js; do
   fi
 done
 
+# 9router forza SSE per Codex anche quando Claude Code ritenta senza streaming.
+# Il collector SSE→JSON produceva però JSON OpenAI; il target Anthropic veniva ignorato.
+node /patch-next-chunks.js /app/.next/server/chunks/*.js
+
 # migration dati WSL: file posati in /migration solo al primo avvio
 DATA_DIR="${DATA_DIR:-/app/data}"
 if [ -d /migration ] && [ -f /migration/db/data.sqlite ]; then
