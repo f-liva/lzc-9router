@@ -1,7 +1,7 @@
 lzc-sdk-version: '0.1'
 name: 9router
 package: cloud.lazycat.app.ninerouter
-version: 1.2.0
+version: 1.2.1
 description: Local-first AI router with 40+ providers, OAuth subscriptions and fallback combos.
 homepage: https://github.com/decolua/9router
 author: Federico Liva
