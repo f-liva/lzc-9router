@@ -1,21 +1,6 @@
 #!/bin/sh
 set -e
 
-# Patch defer_loading (upstream issue #3567): 9router setta cache_control
-# sull'ultimo tool senza guardia; se e' un tool MCP con defer_loading:true,
-# Anthropic risponde 400 PRIMA del fallback. Idempotente: skip se gia' patchato.
-PATCHED_MARKER='defer_loading&&(m.tools'
-for f in /app/.next/server/chunks/*.js; do
-  if grep -q 'm\.tools\.length>0&&(m\.tools\[m\.tools\.length-1\]\.cache_control={type:"ephemeral",ttl:"1h"})' "$f" 2>/dev/null; then
-    sed -i 's|m.tools.length>0&&(m.tools\[m.tools.length-1\].cache_control={type:"ephemeral",ttl:"1h"})|m.tools.length>0\&\&!m.tools[m.tools.length-1].defer_loading\&\&(m.tools[m.tools.length-1].cache_control={type:"ephemeral",ttl:"1h"})|' "$f"
-    echo "[entrypoint] patch defer_loading applicata a $f"
-  fi
-done
-
-# 9router forza SSE per Codex anche quando Claude Code ritenta senza streaming.
-# Il collector SSE→JSON produceva però JSON OpenAI; il target Anthropic veniva ignorato.
-node /patch-next-chunks.js /app/.next/server/chunks/*.js
-
 # migration dati WSL: file posati in /migration solo al primo avvio
 DATA_DIR="${DATA_DIR:-/app/data}"
 if [ -d /migration ] && [ -f /migration/db/data.sqlite ]; then
@@ -29,4 +14,6 @@ if [ -d /migration ] && [ -f /migration/db/data.sqlite ]; then
   fi
 fi
 
-exec "$@"
+# come l'entrypoint upstream: i volumi montati arrivano con owner sbagliato
+chown -R node:node /app/data /app/data-home 2>/dev/null || true
+exec su-exec node "$@"
