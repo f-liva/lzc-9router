@@ -1,14 +1,15 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' v0.5.59 piu' i tre fix aperti come PR su decolua/9router
-# (#3683 fallback non-streaming, #3686 server_tool_use con id estraneo,
-# #3687 cache_control su tool defer_loading). Quando le PR vengono mergiate il
+# di f-liva/9router e' v0.5.59 piu' i quattro fix aperti come PR su
+# decolua/9router (#3683 fallback non-streaming, #3686 server_tool_use con id
+# estraneo, #3687 cache_control su tool defer_loading, #3691 marker [1m] del
+# contesto 1M di Claude Code). Quando le PR vengono mergiate il
 # branch si riallinea a monte e questo file non cambia.
 # Regola: niente patch a valle sul bundle compilato — il fix sta nel sorgente.
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=5d51fbb8208ab3134e6b6c7793e329e145142cef
+ARG NINEROUTER_REF=96c8215967fb116dbcf852f98f51d330f46455bc
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
