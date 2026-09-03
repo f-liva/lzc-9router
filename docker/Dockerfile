@@ -9,7 +9,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=b32bfb6e9cea6dcd8e98950fbd7c815478302247
+ARG NINEROUTER_REF=18a8daf3863a27b683018cbfe80fb719ecd6d6d8
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
