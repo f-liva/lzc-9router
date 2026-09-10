@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' v0.5.59 piu' i cinque fix aperti come PR su
+# di f-liva/9router e' v0.5.65 piu' i sei fix aperti come PR su
 # decolua/9router (#3683 fallback non-streaming, #3686 server_tool_use con id
 # estraneo, #3687 cache_control su tool defer_loading, #3691 marker [1m] del
-# contesto 1M di Claude Code, e i beta flag Anthropic sui provider-node
+# contesto 1M di Claude Code, #3949 systemPrompt top-level che kiro.dev rifiuta
+# con 400 REQUEST_BODY_INVALID, e i beta flag Anthropic sui provider-node
 # anthropic-compatible che fronteggiano Anthropic — senza
 # context-management-2025-06-27 il nodo risponde 400 e il combo lo salta in
 # silenzio). Quando le PR vengono mergiate il branch si riallinea a monte e
@@ -12,7 +13,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=04c6e64495b0cae733c6893794d1b2e7c2e2bb31
+ARG NINEROUTER_REF=0770195254c6a8e8204592f5512c4a6e392f4dc6
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
