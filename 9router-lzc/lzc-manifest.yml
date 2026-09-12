@@ -20,6 +20,8 @@ application:
   routes:
     - /=http://ninerouter.cloud.lazycat.app.ninerouter.lzcapp:20128
   subdomain: ninerouter
+  # Usato come backend LLM da Papra (auto-tagging): deve restare acceso anche senza utenti sulla UI.
+  background_task: true
 
 services:
   ninerouter:
