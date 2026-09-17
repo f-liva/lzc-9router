@@ -1,19 +1,22 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' v0.5.65 piu' i sei fix aperti come PR su
-# decolua/9router (#3683 fallback non-streaming, #3686 server_tool_use con id
-# estraneo, #3687 cache_control su tool defer_loading, #3691 marker [1m] del
-# contesto 1M di Claude Code, #3949 systemPrompt top-level che kiro.dev rifiuta
-# con 400 REQUEST_BODY_INVALID, e i beta flag Anthropic sui provider-node
-# anthropic-compatible che fronteggiano Anthropic — senza
-# context-management-2025-06-27 il nodo risponde 400 e il combo lo salta in
-# silenzio). Quando le PR vengono mergiate il branch si riallinea a monte e
-# questo file non cambia.
+# di f-liva/9router e' la tag upstream v0.5.75 piu' i tre fix ancora aperti come
+# PR su decolua/9router (#3683 il path Claude su forced-SSE->JSON, #3693 l'echo
+# del modello richiesto invece di quello del provider, #4078 la strategia
+# cache-affinity che pinna una conversazione su un account solo).
+#
+# Gli altri cinque fix nostri sono stati ASSORBITI da upstream fra v0.5.65 e
+# v0.5.75 e non vanno piu' riapplicati: server_tool_use con id estraneo,
+# cache_control su tool defer_loading, marker [1m] del contesto 1M, systemPrompt
+# top-level che kiro.dev rifiuta, beta flag Anthropic sui provider-node
+# anthropic-compatible. Prima di ogni upgrade si ricontrolla quali PR risultano
+# ancora aperte: quelle chiuse sono gia' dentro la tag.
+#
 # Regola: niente patch a valle sul bundle compilato — il fix sta nel sorgente.
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=0770195254c6a8e8204592f5512c4a6e392f4dc6
+ARG NINEROUTER_REF=bdca98f4e02a3d5609fc9215359a8be44a0055ef
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
