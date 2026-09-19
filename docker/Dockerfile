@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' la tag upstream v0.5.75 piu' i tre fix ancora aperti come
+# di f-liva/9router e' la tag upstream v0.5.81 piu' i tre fix ancora aperti come
 # PR su decolua/9router (#3683 il path Claude su forced-SSE->JSON, #3693 l'echo
 # del modello richiesto invece di quello del provider, #4078 la strategia
 # cache-affinity che pinna una conversazione su un account solo).
 #
-# Gli altri cinque fix nostri sono stati ASSORBITI da upstream fra v0.5.65 e
-# v0.5.75 e non vanno piu' riapplicati: server_tool_use con id estraneo,
+# Gli altri cinque fix nostri sono stati ASSORBITI da upstream entro v0.5.75
+# e non vanno piu' riapplicati: server_tool_use con id estraneo,
 # cache_control su tool defer_loading, marker [1m] del contesto 1M, systemPrompt
 # top-level che kiro.dev rifiuta, beta flag Anthropic sui provider-node
 # anthropic-compatible. Prima di ogni upgrade si ricontrolla quali PR risultano
@@ -16,7 +16,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=bdca98f4e02a3d5609fc9215359a8be44a0055ef
+ARG NINEROUTER_REF=2ba25196f993215fc1b9b6577a46dece97adc3ef
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
