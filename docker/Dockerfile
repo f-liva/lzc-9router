@@ -1,9 +1,17 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' la tag upstream v0.5.81 piu' i tre fix ancora aperti come
+# di f-liva/9router e' la tag upstream v0.5.85 piu' i tre fix ancora aperti come
 # PR su decolua/9router (#3683 il path Claude su forced-SSE->JSON, #3693 l'echo
 # del modello richiesto invece di quello del provider, #4078 la strategia
 # cache-affinity che pinna una conversazione su un account solo).
+#
+# ATTENZIONE (22/09/2026): la #3683 risulta ancora `open` ma upstream ne ha
+# gia' reimplementata META' dentro v0.5.85 — openAICompletionToClaudeMessage e'
+# definita inline in open-sse/handlers/chatCore/nonStreamingHandler.js. L'altra
+# meta' (la conversione forzata SSE->JSON per i client Claude in
+# sseToJsonHandler.js) upstream NON ce l'ha ancora. Lo stato della PR dice DOVE
+# guardare, non COSA e' gia' dentro: al conflitto si ispezionano entrambe le
+# meta'.
 #
 # Gli altri cinque fix nostri sono stati ASSORBITI da upstream entro v0.5.75
 # e non vanno piu' riapplicati: server_tool_use con id estraneo,
@@ -16,7 +24,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=2ba25196f993215fc1b9b6577a46dece97adc3ef
+ARG NINEROUTER_REF=06487d1722ab6d31da4cdbc4b6797b51fcbe5bc8
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
