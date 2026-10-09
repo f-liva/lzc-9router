@@ -1,17 +1,22 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' la tag upstream v0.5.85 piu' i tre fix ancora aperti come
-# PR su decolua/9router (#3683 il path Claude su forced-SSE->JSON, #3693 l'echo
-# del modello richiesto invece di quello del provider, #4078 la strategia
-# cache-affinity che pinna una conversazione su un account solo).
+# di f-liva/9router e' la tag upstream v0.5.95 piu' i quattro fix che upstream
+# non ha (ancora) assorbito:
+#   #3683  il path Claude su forced-SSE->JSON
+#   #3693  l'echo del modello richiesto invece di quello del provider
+#   #4078  la strategia cache-affinity che pinna una conversazione su un account
+#   (no PR) shouldTreatAsNonStreaming(), vedi sotto
 #
-# ATTENZIONE (22/09/2026): la #3683 risulta ancora `open` ma upstream ne ha
-# gia' reimplementata META' dentro v0.5.85 — openAICompletionToClaudeMessage e'
-# definita inline in open-sse/handlers/chatCore/nonStreamingHandler.js. L'altra
-# meta' (la conversione forzata SSE->JSON per i client Claude in
-# sseToJsonHandler.js) upstream NON ce l'ha ancora. Lo stato della PR dice DOVE
-# guardare, non COSA e' gia' dentro: al conflitto si ispezionano entrambe le
-# meta'.
+# VERIFICATO IL 09/10/2026 su v0.5.95: nessuno dei quattro e' stato assorbito.
+# La #3683 resta un caso da ispezionare a mano a ogni upgrade: upstream ha
+# reimplementato openAICompletionToClaudeMessage INLINE in
+# open-sse/handlers/chatCore/nonStreamingHandler.js, ma senza i nostri due
+# pezzi (l'echo di requestModel e `content: []` sulle completion vuote). La
+# risoluzione corretta e' tenere il NOSTRO modulo completionToClaude.js e
+# lasciare che il merge rimuova l'inline upstream: il conflitto cade sulla sola
+# riga di import, e il controllo da fare dopo e'
+# `grep -c 'function openAICompletionToClaudeMessage' nonStreamingHandler.js` = 0
+# (una doppia definizione non rompe il merge, rompe il bundle a runtime).
 #
 # Gli altri cinque fix nostri sono stati ASSORBITI da upstream entro v0.5.75
 # e non vanno piu' riapplicati: server_tool_use con id estraneo,
@@ -20,11 +25,18 @@
 # anthropic-compatible. Prima di ogni upgrade si ricontrolla quali PR risultano
 # ancora aperte: quelle chiuse sono gia' dentro la tag.
 #
+# Quarto fix nostro (08/10/2026, non ancora in PR upstream): chatCore
+# default-streaming guess (stream non impostato dal client -> stream=true)
+# combinato con un provider che risponde comunque in application/json rompeva
+# i client OpenAI "piatti" (es. Nextcloud integration_openai) che non
+# decodificano mai SSE. shouldTreatAsNonStreaming() in nonStreamingHandler.js
+# reindirizza quel caso specifico al path non-streaming gia' corretto.
+#
 # Regola: niente patch a valle sul bundle compilato — il fix sta nel sorgente.
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=06487d1722ab6d31da4cdbc4b6797b51fcbe5bc8
+ARG NINEROUTER_REF=ff81577f86d6b15ac5fb227d265247925ddd8668
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
