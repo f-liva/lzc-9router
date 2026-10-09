@@ -1,13 +1,16 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' la tag upstream v0.5.95 piu' i quattro fix che upstream
+# di f-liva/9router e' la release upstream v0.5.99 piu' i quattro fix che upstream
 # non ha (ancora) assorbito:
 #   #3683  il path Claude su forced-SSE->JSON
 #   #3693  l'echo del modello richiesto invece di quello del provider
 #   #4078  la strategia cache-affinity che pinna una conversazione su un account
 #   (no PR) shouldTreatAsNonStreaming(), vedi sotto
 #
-# VERIFICATO IL 09/10/2026 su v0.5.95: nessuno dei quattro e' stato assorbito.
+# VERIFICATO IL 09/10/2026 su v0.5.99 (commit ce4460ef): nessuno dei quattro e'
+# stato assorbito. v0.5.99 e' una release NON TAGGATA: i tag upstream si fermano
+# a v0.5.95, la versione vera si legge in package.json su master e nel commit di
+# release (subject `# v0.X.YY (data)`). Guardare solo i tag fa perdere release.
 # La #3683 resta un caso da ispezionare a mano a ogni upgrade: upstream ha
 # reimplementato openAICompletionToClaudeMessage INLINE in
 # open-sse/handlers/chatCore/nonStreamingHandler.js, ma senza i nostri due
@@ -36,7 +39,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=ff81577f86d6b15ac5fb227d265247925ddd8668
+ARG NINEROUTER_REF=c9df14233361d1f9a0174a8ad2b3019df84a948d
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
