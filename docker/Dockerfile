@@ -1,13 +1,14 @@
 # syntax=docker/dockerfile:1.7
 # 9router costruito dal NOSTRO fork, non dall'immagine upstream: il branch `lzc`
-# di f-liva/9router e' la release upstream v0.5.99 piu' i quattro fix che upstream
+# di f-liva/9router e' la release upstream v0.5.99 piu' i cinque fix che upstream
 # non ha (ancora) assorbito:
 #   #3683  il path Claude su forced-SSE->JSON
 #   #3693  l'echo del modello richiesto invece di quello del provider
 #   #4078  la strategia cache-affinity che pinna una conversazione su un account
 #   (no PR) shouldTreatAsNonStreaming(), vedi sotto
+#   (no PR) parseClaudeSSEToMessage(), vedi sotto
 #
-# VERIFICATO IL 09/10/2026 su v0.5.99 (commit ce4460ef): nessuno dei quattro e'
+# VERIFICATO IL 09/10/2026 su v0.5.99 (commit ce4460ef): nessuno dei primi quattro e'
 # stato assorbito. v0.5.99 e' una release NON TAGGATA: i tag upstream si fermano
 # a v0.5.95, la versione vera si legge in package.json su master e nel commit di
 # release (subject `# v0.X.YY (data)`). Guardare solo i tag fa perdere release.
@@ -28,6 +29,17 @@
 # anthropic-compatible. Prima di ogni upgrade si ricontrolla quali PR risultano
 # ancora aperte: quelle chiuse sono gia' dentro la tag.
 #
+# Quinto fix nostro (09/10/2026, non ancora in PR upstream), scoperto verificando
+# il quarto: shouldTreatAsNonStreaming instradava correttamente al path
+# non-streaming, ma quel path parsava il body con parseSSEToOpenAIResponse, che
+# legge `choices[].delta` — forma che l'SSE Anthropic non ha mai. Un upstream
+# Claude restituiva quindi 200 con `content: ""` e `usage: {}` ai client OpenAI
+# che omettono `stream` (Nextcloud integration_openai). parseClaudeSSEToMessage()
+# in open-sse/handlers/chatCore/claudeSSEToMessage.js ricostruisce l'Anthropic
+# Message dagli eventi, cosi' la traduzione targetFormat->sourceFormat a valle
+# resta quella normale. Controprova: /v1/chat/completions senza `stream` deve
+# rispondere con contenuto non vuoto, non solo /v1/messages.
+#
 # Quarto fix nostro (08/10/2026, non ancora in PR upstream): chatCore
 # default-streaming guess (stream non impostato dal client -> stream=true)
 # combinato con un provider che risponde comunque in application/json rompeva
@@ -39,7 +51,7 @@
 ARG NODE_IMAGE=node:22-alpine
 ARG NINEROUTER_REPO=https://github.com/f-liva/9router.git
 # Pin sul commit, non sul branch: build riproducibile.
-ARG NINEROUTER_REF=c9df14233361d1f9a0174a8ad2b3019df84a948d
+ARG NINEROUTER_REF=f69891ced7237a276e8bb0c3add6680836391f69
 
 FROM ${NODE_IMAGE} AS builder
 ARG NINEROUTER_REPO
