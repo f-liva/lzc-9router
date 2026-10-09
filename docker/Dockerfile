@@ -6,7 +6,7 @@
 #   #3693  l'echo del modello richiesto invece di quello del provider
 #   #4078  la strategia cache-affinity che pinna una conversazione su un account
 #   (no PR) shouldTreatAsNonStreaming(), vedi sotto
-#   (no PR) parseClaudeSSEToMessage(), vedi sotto
+#   #4695  parseClaudeSSEToMessage(), vedi sotto
 #
 # VERIFICATO IL 09/10/2026 su v0.5.99 (commit ce4460ef): nessuno dei primi quattro e'
 # stato assorbito. v0.5.99 e' una release NON TAGGATA: i tag upstream si fermano
@@ -29,7 +29,7 @@
 # anthropic-compatible. Prima di ogni upgrade si ricontrolla quali PR risultano
 # ancora aperte: quelle chiuse sono gia' dentro la tag.
 #
-# Quinto fix nostro (09/10/2026, non ancora in PR upstream), scoperto verificando
+# Quinto fix nostro (09/10/2026, PR #4695 aperta il 09/10/2026), scoperto verificando
 # il quarto: shouldTreatAsNonStreaming instradava correttamente al path
 # non-streaming, ma quel path parsava il body con parseSSEToOpenAIResponse, che
 # legge `choices[].delta` — forma che l'SSE Anthropic non ha mai. Un upstream
